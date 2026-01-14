@@ -20,9 +20,9 @@
 - **Security:** Secure communication is often a requirement. Protocols like HTTPS use encryption to protect data in transit.
 
 > [!TIP]
-> We will not be going into the rabbit hole of Network ENG. 
+>* We will not be going into the rabbit hole of Network ENG. 
 > 
-> For now, all we need to know is that HTTP is an application protocol structure that defines how software applications communicate with each other, typically over a network. HTTP uses TCP (Transmission Control Protocol) to send and recieve the data over a network.
+> For now, all we need to know is that HTTP is an application protocol structure that defines how software applications communicate with each other, typically over a network. HTTP uses TCP (Transmission Control Protocol) to send and recieve the data over a network.*
 
 #### There are two concepts at the heart of HTTP protocols,
 - **Stateless** 
@@ -45,7 +45,7 @@
   - The client needs to send all the required resources the server needs so that it can process the request such as, the URL, HTTP method, tokens etc..
   - And, HTTP/HTTPS uses TCP protocol to transfer the data.
   > [!TIP]
-  > Client and Server establish some kind of network connection where messages are sent and received.
+  > *Client and Server establish some kind of network connection where messages are sent and received.*
 
 #### Messages
 
@@ -108,10 +108,126 @@ X-Firefox-Spdy: h2
 > 
 > - HTTP Headers act as a ***remote control*** on the server side, client can send instructions to the server via headers which influencing the server behavior. e.g. content type negotiation- clients can request for specific type of content formats such as, XML, JSON, etc.. using a *content-type* header and the server would respond with the approriate format. (if the client wants the reponse to be JSON it will send content-type: application/json and the server would respond with json format. Hence making the client to remotly control the server using headers).
 
-**HTTP Methods:** 
+#### HTTP Methods 
 > Define the *intent* of the interaction between client and server.
 - **GET:** Fetches the resource from the server without modifying the resource.
 - **POST:** Creates new resource in the server by sending the resource typically in a request body.
 - **PUT:**  Replaces an entire resource, sending the full new version. used where full overwrites is required. PUT is idempotent (multiple identical requests have the same effect)
 - **PATCH:** Applies partial updates, sending only the changes. modifies an existing resource and isn't always idempotent. used for efficient, specific field modifications. 
 - **DELETE:** Deletes some kind of resource in the server.
+
+#### Idempotent VS Non-Idempotent Request
+
+| Idempotent | Non-Idempotent |
+| ----- | ------|
+| Does not alter the resource after calling multiple times. <br> e.g. GET, DELETE, PUT <br> e.g. if you call GET http request even a 100 times you would get the same response.| Alters the resources when called. <br> e.g. POST, it creates a new record everytime you make the request. |
+
+#### Options HTTP method 
+
+> A simple HTTP request made by the client to fetch the capabilities of a server for a particular HTTP endpoint. <br>
+> Usually used in a preflight HTTP request.
+
+e.g, OPTIONS request from the client,
+```http
+OPTIONS /api/resource HTTP /2
+Host: api.anotherdomain.com
+Origin: https://ui.differentdomain.com
+Access-Control-Request-Method: PUT
+Access-Control-Request-Headers: Authorization
+```
+- What the above request basically means is that, Hey server (`Host: api.anotherdomain.com`), this is client (`Origin: https://ui.differentdomain.com`) could you please check if this api endpoint (`/api/resource`) in your server supports this (`Access-Control-Request-Method: PUT`) HTTP method and does it also support this (`Access-Control-Request-Headers: Authorization`) header? 
+
+OPTIONS response from the server,
+```http
+  HTTP/2 204 No Content
+  Access-Control-Allow-Origin: https://ui.differentdomain.com
+  Access-Control-Allow-Methods: PUT, DELETE
+  Access-Control-Allow-Headers: Authorization
+  Access-Control-Max-Age: 86400
+```
+- All the headers are self explainatory and `Access-Control-Max-Age: 86400` just means that the endpoint's *Access-Control-* headers will not change for the next 24 hours.
+
+#### Simple VS Preflight Request
+
+| Simple request | Preflight request |
+| ------|------|
+|A request is simple when the method is not PUT, DELETE | A request is considered as preflight request when, <br> The method is not POST, GET, HEAD <br> OR <br> The request includes *non-simple* headers (Authorization, X-Custom-Header) <br> OR <br> Content-Type is other than, application/x-www-form-unlencoded, multipart/form-data, text/plain |
+
+- e.g. of simple request
+```http 
+GET /IceCream?user=nikitha HTTP/2
+Host: localhost:7175
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:146.0) Gecko/20100101 Firefox/146.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: none
+Priority: u=0, i
+TE: trailers
+```
+
+- e.g of preflight request
+  > Preflight requests happen in 2-stage,
+  > 1. Client (browser) makes a OPTIONS request to the server asking for server capabalities for the request endpoint - this is known as the preflight request.
+  > 2. Once the preflight request is successful only then the client (browser) makes the actual request to the server.
+
+
+1. **Preflight request uses OPTIONS method**
+  
+Request:
+```http
+OPTIONS /api/resource HTTP /2
+Host: api.anotherdomain.com
+Origin: https://ui.differentdomain.com
+Access-Control-Request-Method: PUT
+Access-Control-Request-Headers: Authorization
+```
+Response:
+```http
+HTTP/2 204 No Content
+Access-Control-Allow-Origin: https://ui.differentdomain.com
+Access-Control-Allow-Methods: PUT, DELETE
+Access-Control-Allow-Headers: Authorization
+Access-Control-Max-Age: 86400
+```
+
+2. **Actual PUT request**
+
+Request:
+```http
+PUT /api/resource HTTP /2
+Host: api.anotherdomain.com
+Origin: https://ui.differentdomain.com
+Authorization: Bearer token123
+Content-Type: application/json
+
+{
+  "name": "random"
+}
+```
+
+Response:
+```http
+HTTP /2 200 OK
+Origin: https://ui.differentdomain.com
+Access-Control-Allow-Origin: https://ui.differentdomain.com
+
+{
+  "message": "resourece updated successfully"
+}
+```
+
+> [!TIP]
+> **But why on earth do we want to do all this preflight, options? why cant we just directly make the actual request?** <br>
+> *We need it for security. 
+> Client (Browser) does not want to request a server where its not allowed to make a request.
+> Since, the Client (Brower) web page runs on different domain in other words ***origin*** and the server lives in a completly different domain ***host*** 
+> The origin first needs to check if it is even allowed to make requests the host or not. 
+> If its not allowed we get back CORS error in the network tab and also in the console
+> And if the origin is allowed to make requests to the host the OPTIONS request will respond with `Access-Control-Allow-Origin: https://ui.differentdomain.com` stating that, ***Cross-Origin-Resources-Sharing(CORS)*** is allowed between Client/Origin and the Server/Host
+> CORS configuration is done at the server level.
+> Congrats you now know what the concept of CORS.*
