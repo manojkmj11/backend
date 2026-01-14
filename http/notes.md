@@ -20,9 +20,9 @@
 - **Security:** Secure communication is often a requirement. Protocols like HTTPS use encryption to protect data in transit.
 
 > [!TIP]
->* We will not be going into the rabbit hole of Network ENG. 
+>*We will not be going into the rabbit hole of Network ENG.* 
 > 
-> For now, all we need to know is that HTTP is an application protocol structure that defines how software applications communicate with each other, typically over a network. HTTP uses TCP (Transmission Control Protocol) to send and recieve the data over a network.*
+> *For now, all we need to know is that HTTP is an application protocol structure that defines how software applications communicate with each other, typically over a network. HTTP uses TCP (Transmission Control Protocol) to send and recieve the data over a network.*
 
 #### There are two concepts at the heart of HTTP protocols,
 - **Stateless** 
@@ -104,9 +104,9 @@ X-Firefox-Spdy: h2
 ***Set-Cookie:*** Prevents JS to access cookies and the cookies are only sent to the server via HTTPS request. To ensure user privacy.
 
 > [!TIP]
-> - HTTP/HPPS Protocol is ***highly extensible*** because Headers can be easily added or customized without altering the underlying protocol. (for e.g. we can add our own custom headers without needing to modify the whole protocol)
+> - *HTTP/HPPS Protocol is ***highly extensible*** because Headers can be easily added or customized without altering the underlying protocol. (for e.g. we can add our own custom headers without needing to modify the whole protocol)*
 > 
-> - HTTP Headers act as a ***remote control*** on the server side, client can send instructions to the server via headers which influencing the server behavior. e.g. content type negotiation- clients can request for specific type of content formats such as, XML, JSON, etc.. using a *content-type* header and the server would respond with the approriate format. (if the client wants the reponse to be JSON it will send content-type: application/json and the server would respond with json format. Hence making the client to remotly control the server using headers).
+> - *HTTP Headers act as a ***remote control*** on the server side, client can send instructions to the server via headers which influencing the server behavior. e.g. content type negotiation- clients can request for specific type of content formats such as, XML, JSON, etc.. using a *content-type* header and the server would respond with the approriate format. (if the client wants the reponse to be JSON it will send content-type: application/json and the server would respond with json format. Hence making the client to remotly control the server using headers).*
 
 #### HTTP Methods 
 > Define the *intent* of the interaction between client and server.
@@ -223,11 +223,11 @@ Access-Control-Allow-Origin: https://ui.differentdomain.com
 
 > [!TIP]
 > **But why on earth do we want to do all this preflight, options? why cant we just directly make the actual request?** <br>
-> *We need it for security. 
-> Client (Browser) does not want to request a server where its not allowed to make a request.
-> Since, the Client (Brower) web page runs on different domain in other words ***origin*** and the server lives in a completly different domain ***host*** 
-> The origin first needs to check if it is even allowed to make requests the host or not. 
-> If its not allowed we get back CORS error in the network tab and also in the console
-> And if the origin is allowed to make requests to the host the OPTIONS request will respond with `Access-Control-Allow-Origin: https://ui.differentdomain.com` stating that, ***Cross-Origin-Resources-Sharing(CORS)*** is allowed between Client/Origin and the Server/Host
-> CORS configuration is done at the server level.
-> Congrats you now know what the concept of CORS.*
+> - *We need it for security. 
+> - Client (Browser) does not want to request a server where its not allowed to make a request.
+> - Since, the Client (Brower) web page runs on different domain in other words ***origin*** and the server lives in a completly different domain ***host*** 
+> - The origin first needs to check if it is even allowed to make requests the host or not. 
+> - If its not allowed we get back CORS error in the network tab and also in the console
+> - And if the origin is allowed to make requests to the host the OPTIONS request will respond with `Access-Control-Allow-Origin: https://ui.differentdomain.com` stating that, ***Cross-Origin-Resources-Sharing(CORS)*** is allowed between Client/Origin and the Server/Host
+> - CORS configuration is done at the server level.
+> - Congrats you now know what the concept of CORS.*
