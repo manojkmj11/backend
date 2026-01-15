@@ -223,11 +223,41 @@ Access-Control-Allow-Origin: https://ui.differentdomain.com
 
 > [!TIP]
 > **But why on earth do we want to do all this preflight, options? why cant we just directly make the actual request?** <br>
-> - *We need it for security. 
-> - Client (Browser) does not want to request a server where its not allowed to make a request.
-> - Since, the Client (Brower) web page runs on different domain in other words ***origin*** and the server lives in a completly different domain ***host*** 
-> - The origin first needs to check if it is even allowed to make requests the host or not. 
-> - If its not allowed we get back CORS error in the network tab and also in the console
-> - And if the origin is allowed to make requests to the host the OPTIONS request will respond with `Access-Control-Allow-Origin: https://ui.differentdomain.com` stating that, ***Cross-Origin-Resources-Sharing(CORS)*** is allowed between Client/Origin and the Server/Host
-> - CORS configuration is done at the server level.
-> - Congrats you now know what the concept of CORS.*
+> - *We need it for security.* 
+> - *Client (Browser) does not want to request a server where its not allowed to make a request.*
+> - *Since, the Client (Brower) web page runs on different domain in other words ***origin*** and the server lives in a completly different domain ***host*** *
+> - *The origin first needs to check if it is even allowed to make requests the host or not.* 
+> - *If its not allowed we get back CORS error in the network tab and also in the console*
+> - *And if the origin is allowed to make requests to the host the OPTIONS request will respond with `Access-Control-Allow-Origin: https://ui.differentdomain.com` stating that, ***Cross-Origin-Resources-Sharing(CORS)*** is allowed between Client/Origin and the Server/Host*
+> - *CORS configuration is done at the server level.*
+> - *Congrats you now know the basic concept of CORS.*
+
+#### HTTP status codes
+
+> HTTP status codes are a global standard way of letting the client know about the request's state from the server.
+
+| Status code series | Description | Example |
+| --- | --- | --- |
+| `1xx` | [Information](https://www.websitepulse.com/kb/1xx_http_status_codes) | `100 Continue` Request can continue with the next stage <br> e.g. First the client would send the size of the file in the request headers and the server would check the file size and if it is accepted by the server it would respond with 100 Continue meaning, the client can now procced to send the whole data for upload usually using a `POST` request. <br>Other status codes include, <br> `101 Switching Protocols` <br> `102 Processing` <br>etc..|  
+| `2xx` | [Success](https://www.websitepulse.com/kb/2xx_http_status_codes) | `200 OK` Request has been successfully processed by the server, commonly used in `GET` requests <br> `201 Created` Resouce requested has been created in the server, this is usually paired with `POST` requests <br> `204 No Content` Request has been processed and it doesnt produce any response, you will find this used in `DELETE` requests <br> `202 Accepted` Request has been accepted for processing but not yet completed, used for large data processing which takes long time to complete |
+| `3xx` | [Re-directions](https://www.websitepulse.com/kb/3xx_http_status_codes) | `301 Moved Permanently` Requested request has been permanently moved to a different URL <br> `303 See Other` Used to redirect the client after a `POST` request to a different URL (usually a `GET`) to avoid duplicate form submissions <br> `304 Not Modified` Informs the client that its the cached version of the resource and its still valid to use and its not been modified, helps to reduce the number of requests to the server |
+| `4xx` | [Client Errors](https://www.websitepulse.com/kb/4xx_http_status_codes) | `400 Bad Request` Client's request has data validation errors <br> `401 Unauthorized` Client is unauthorized to make the request, e.g missing Authorization headers, invalid jwt token etc.. <br> `403 Forbidden` Server has acknowledged the request but the client is not authorized to access the content, e.g. When user has access to login to the web site but only has access to productA and when user tries to access productB he will be greeted with `403 Forbidden` message <br> `404 Not Found` Server cannot find the request resource/URL <br> `408 Request Timeout` Server did not recieve the complete request within the allowed time period <br> `429 Too Many Requests` Client has made too many requests within a given time frame, usually indicates Rate Limiting is in place at server level <br> `409 Conflict` Requested data is already present in the server, e.g. When client tries to create a new resource with existing name/ID using `POST` or tries to update with the resource which has same name/ID using `PUT` |
+|`5xx`| [Server Errors](https://www.websitepulse.com/kb/5xx_http_status_codes) | `500 Interal Server Error` Server has encoutered a unhandeled exception and cannot process the request <br> `503 Service Unavailable` Server is temporarily down and cannot handle the request at this moment, e.g. when the server is undergoing deployment of a newer version of the build, server is under maintainance etc.. |
+
+#### HTTP Caching
+
+> Storing copies of responses for re-use. Reducing network calls, bandwidth, improves load time, reduces server load. <br>
+> In other words, re-use the old data if the data has not changed.
+
+- **Response Headers used in HTTP Caching**
+  - `Cache-Control`: Specifies the amount of time the client must maintain the response before requesting for a new one. e.g. `Cache-Control: max-age=10, public` this means, the client should use the same response for 10 seconds before requesting a new response
+  - `ETag`: A unique hash of the response sent by the server. e.g. `ETag: 23hdaoncox` the hashed value of response: `{"Status": "Error" }` is `23hdaoncox`.
+  - `Last-Modified`: The last modified date time of the response. e.g. `Last-Modified: Fri, 07 Jan 2025 12:09:32 GMT` meaning, the resource was last modified at *Fri, 07 Jan 2025 12:09:32 GMT*
+  
+- **Request Headers used in HTTP Caching**
+- `If-None-Match`: Sends the value of `ETag` header which the client had recieved in the first response when the resource was requested. e.g. `If-None-Match: 23hdaoncox` server uses this `ETag` value checks if the hash of the new response is same has the new one, if its the same then server would respond with `304 Not Modified`
+- `If-Modified-Since`: Sends the value of `Last-Modified` header which the client had recieved in the first response when the resource was requested. e.g. `If-Modified-Since: Fri, 07 Jan 2026 12:09:32` server sees this header and compares it with the last modified value of the requested resource if both are the same then server would respond with `304 Not Modified` 
+
+**Simple example of *cached* HTTP request flow**
+
+![alt text](image.png)
