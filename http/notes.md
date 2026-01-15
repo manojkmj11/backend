@@ -234,7 +234,7 @@ Access-Control-Allow-Origin: https://ui.differentdomain.com
 
 #### HTTP status codes
 
-> HTTP status codes are a global standard way of letting the client know about the request's state from the server.
+> HTTP status codes are a global standard way of letting the client know about the request status from the server.
 
 | Status code series | Description | Example |
 | --- | --- | --- |
@@ -255,9 +255,9 @@ Access-Control-Allow-Origin: https://ui.differentdomain.com
   - `Last-Modified`: The last modified date time of the response. e.g. `Last-Modified: Fri, 07 Jan 2025 12:09:32 GMT` meaning, the resource was last modified at *Fri, 07 Jan 2025 12:09:32 GMT*
   
 - **Request Headers used in HTTP Caching**
-- `If-None-Match`: Sends the value of `ETag` header which the client had recieved in the first response when the resource was requested. e.g. `If-None-Match: 23hdaoncox` server uses this `ETag` value checks if the hash of the new response is same has the new one, if its the same then server would respond with `304 Not Modified`
-- `If-Modified-Since`: Sends the value of `Last-Modified` header which the client had recieved in the first response when the resource was requested. e.g. `If-Modified-Since: Fri, 07 Jan 2026 12:09:32` server sees this header and compares it with the last modified value of the requested resource if both are the same then server would respond with `304 Not Modified` 
+  - `If-None-Match`: Sends the value of `ETag` header which the client had recieved in the first response when the resource was requested. e.g. `If-None-Match: 23hdaoncox` server uses this `ETag` value checks if the hash of the new response is same has the new one, if its the same then server would respond with `304 Not Modified`
+  - `If-Modified-Since`: Sends the value of `Last-Modified` header which the client had recieved in the first response when the resource was requested. e.g. `If-Modified-Since: Fri, 07 Jan 2026 12:09:32` server sees this header and compares it with the last modified value of the requested resource if both are the same then server would respond with `304 Not Modified` 
 
 **Simple example of *cached* HTTP request flow**
 
-![alt text](image.png)
+![Simple example of *cached* HTTP request flow](image.png)
