@@ -261,3 +261,34 @@ Access-Control-Allow-Origin: https://ui.differentdomain.com
 **Simple example of *cached* HTTP request flow**
 
 ![Simple example of *cached* HTTP request flow](image.png)
+
+#### Content Negotiation
+> A mechanism by which client can send it's content preferences to the server <br>
+> Preferences may include language, content type, encoding type
+
+**Content Negotiation Headers**
+- `Accept` the type of content client prefers in the response, e.g. application/json, xml etc..
+- `Accept-Language` type of language client excepts the response to be formatted in, e.g. en, esp etc..
+- `Accept-Encoding` list of encodings the client would accept from the server, e.g. gzip
+
+#### HTTP Compression
+> used to reduce the size of the response, reduces the amount of bandwidth required and faster page loads
+
+**Headers**
+`Accept-Encoding` list of encodings the client would send in the request. 
+e.g. if client sends, `Accept-Encoding: gzip` in the request as its preffered encoding type, the server sees this preference and compresses the response in gzip format and sends it back to the client.
+
+> [!TIP]
+> **Persistent connections and keep-alive** <br>
+> - Clients use `Connection: keep-alive` header to tell the sever to keep the TCP connection open and resue the same connection in future requests. <br>
+> - Explictly specifying this header is not required in HTTP version >= 1.1, but useful in backward compatibility. <br>
+> - Reusing the same connection would result is faster page loads, reduces server CPU loads as it requires fewer connection setups. <br>
+
+#### SSL, TLS, HTTPS
+
+| Aspect | 	SSH (Secure Shell) | TLS (Transport Layer Security) |	HTTPS (Hypertext Transfer Protocol Secure) |
+| -- | -- | -- | -- |
+| Primary Use |	Secure remote access and command execution. |	Provides an encryption layer for other protocols like HTTP, SMTP, etc.. |	Secure web browsing. |
+Default Port |	TCP Port 22. | TCP Port 443 (for HTTPS). |	TCP Port 443. |
+Authentication |	Mutual authentication (client and server) via keys or passwords. |	Server authentication via CA-signed digital certificates (client auth optional). |	Uses TLS/SSL certificates to verify server identity. |
+Functionality |	Command line access, file transfer (SFTP), tunneling. |	Encryption, authentication, data integrity. |	Secure, encrypted communication for web traffic. |
