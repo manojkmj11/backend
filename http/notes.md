@@ -20,9 +20,10 @@
 - **Security:** Secure communication is often a requirement. Protocols like HTTPS use encryption to protect data in transit.
 
 > [!TIP]
->*We will not be going into the rabbit hole of Network ENG.* 
-> 
-> *For now, all we need to know is that HTTP is an application protocol structure that defines how software applications communicate with each other, typically over a network. HTTP uses TCP (Transmission Control Protocol) to send and recieve the data over a network.*
+> - *We will not be going into the rabbit hole of Network ENG.* <br>
+> - *For now, all we need to know is that HTTP is an application protocol structure that defines how software applications communicate with each other, typically over a network. HTTP uses TCP (Transmission Control Protocol) to send and recieve the data over a network.*
+
+---
 
 #### There are two concepts at the heart of HTTP protocols,
 - **Stateless** 
@@ -44,8 +45,10 @@
   - The server just sits and waits for the request and just responds with the data that is requested.
   - The client needs to send all the required resources the server needs so that it can process the request such as, the URL, HTTP method, tokens etc..
   - And, HTTP/HTTPS uses TCP protocol to transfer the data.
-  > [!TIP]
-  > *Client and Server establish some kind of network connection where messages are sent and received.*
+> [!TIP]
+> *Client and Server establish some kind of network connection where messages are sent and received.*
+
+---
 
 #### Messages
 
@@ -108,6 +111,8 @@ X-Firefox-Spdy: h2
 > 
 > - *HTTP Headers act as a ***remote control*** on the server side, client can send instructions to the server via headers which influencing the server behavior. e.g. content type negotiation- clients can request for specific type of content formats such as, XML, JSON, etc.. using a *content-type* header and the server would respond with the approriate format. (if the client wants the reponse to be JSON it will send content-type: application/json and the server would respond with json format. Hence making the client to remotly control the server using headers).*
 
+---
+
 #### HTTP Methods 
 > Define the *intent* of the interaction between client and server.
 - **GET:** Fetches the resource from the server without modifying the resource.
@@ -116,11 +121,15 @@ X-Firefox-Spdy: h2
 - **PATCH:** Applies partial updates, sending only the changes. modifies an existing resource and isn't always idempotent. used for efficient, specific field modifications. 
 - **DELETE:** Deletes some kind of resource in the server.
 
+---
+
 #### Idempotent VS Non-Idempotent Request
 
 | Idempotent | Non-Idempotent |
 | ----- | ------|
 | Does not alter the resource after calling multiple times. <br> e.g. GET, DELETE, PUT <br> e.g. if you call GET http request even a 100 times you would get the same response.| Alters the resources when called. <br> e.g. POST, it creates a new record everytime you make the request. |
+
+---
 
 #### Options HTTP method 
 
@@ -146,6 +155,8 @@ OPTIONS response from the server,
   Access-Control-Max-Age: 86400
 ```
 - All the headers are self explainatory and `Access-Control-Max-Age: 86400` just means that the endpoint's *Access-Control-* headers will not change for the next 24 hours.
+
+---
 
 #### Simple VS Preflight Request
 
@@ -232,6 +243,8 @@ Access-Control-Allow-Origin: https://ui.differentdomain.com
 > - *CORS configuration is done at the server level.*
 > - *Congrats you now know the basic concept of CORS.*
 
+---
+
 #### HTTP status codes
 
 > HTTP status codes are a global standard way of letting the client know about the request status from the server.
@@ -243,6 +256,8 @@ Access-Control-Allow-Origin: https://ui.differentdomain.com
 | `3xx` | [Re-directions](https://www.websitepulse.com/kb/3xx_http_status_codes) | `301 Moved Permanently` Requested request has been permanently moved to a different URL <br> `303 See Other` Used to redirect the client after a `POST` request to a different URL (usually a `GET`) to avoid duplicate form submissions <br> `304 Not Modified` Informs the client that its the cached version of the resource and its still valid to use and its not been modified, helps to reduce the number of requests to the server |
 | `4xx` | [Client Errors](https://www.websitepulse.com/kb/4xx_http_status_codes) | `400 Bad Request` Client's request has data validation errors <br> `401 Unauthorized` Client is unauthorized to make the request, e.g missing Authorization headers, invalid jwt token etc.. <br> `403 Forbidden` Server has acknowledged the request but the client is not authorized to access the content, e.g. When user has access to login to the web site but only has access to productA and when user tries to access productB he will be greeted with `403 Forbidden` message <br> `404 Not Found` Server cannot find the request resource/URL <br> `408 Request Timeout` Server did not recieve the complete request within the allowed time period <br> `429 Too Many Requests` Client has made too many requests within a given time frame, usually indicates Rate Limiting is in place at server level <br> `409 Conflict` Requested data is already present in the server, e.g. When client tries to create a new resource with existing name/ID using `POST` or tries to update with the resource which has same name/ID using `PUT` |
 |`5xx`| [Server Errors](https://www.websitepulse.com/kb/5xx_http_status_codes) | `500 Interal Server Error` Server has encoutered a unhandeled exception and cannot process the request <br> `503 Service Unavailable` Server is temporarily down and cannot handle the request at this moment, e.g. when the server is undergoing deployment of a newer version of the build, server is under maintainance etc.. |
+
+---
 
 #### HTTP Caching
 
@@ -262,6 +277,8 @@ Access-Control-Allow-Origin: https://ui.differentdomain.com
 
 ![Simple example of *cached* HTTP request flow](image.png)
 
+---
+
 #### Content Negotiation
 > A mechanism by which client can send it's content preferences to the server <br>
 > Preferences may include language, content type, encoding type
@@ -271,18 +288,24 @@ Access-Control-Allow-Origin: https://ui.differentdomain.com
 - `Accept-Language` type of language client excepts the response to be formatted in, e.g. en, esp etc..
 - `Accept-Encoding` list of encodings the client would accept from the server, e.g. gzip
 
+---
+
 #### HTTP Compression
 > used to reduce the size of the response, reduces the amount of bandwidth required and faster page loads
 
 **Headers**
-`Accept-Encoding` list of encodings the client would send in the request. 
+- `Accept-Encoding` list of encodings the client would send in the request. 
 e.g. if client sends, `Accept-Encoding: gzip` in the request as its preffered encoding type, the server sees this preference and compresses the response in gzip format and sends it back to the client.
+
+---
 
 > [!TIP]
 > **Persistent connections and keep-alive** <br>
 > - Clients use `Connection: keep-alive` header to tell the sever to keep the TCP connection open and resue the same connection in future requests. <br>
 > - Explictly specifying this header is not required in HTTP version >= 1.1, but useful in backward compatibility. <br>
 > - Reusing the same connection would result is faster page loads, reduces server CPU loads as it requires fewer connection setups. <br>
+
+---
 
 #### SSL, TLS, HTTPS
 
