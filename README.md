@@ -4,5 +4,5 @@
 1. [what is backend?](/what-is-backend/notes.md)
 2. [http](/http/notes.md)
 3. [routing](/routing/notes.md)
-4. [serialization and deserialization](/serialization%20and%20deserialization/notes.md)
+4. [Serialization and Seserialization](/serialization%20and%20deserialization/notes.md)
 5. [authentication and authorization](/authentication%20and%20authorization/notes.md)
