@@ -13,8 +13,8 @@
 
 | Aspect | Session | jwt | Cookies |
 | --- | --- | --- | --- |
-| **Why?** | **HTTP is stateless**—each request is independent with no memory of previous requests. Without sessions, the server forgets you immediately after responding. <br> **The major problem:** You'd have to re-authenticate on every single action. Click a button? Login again. Load a new page? Login again. Want to buy another ice cream? Login again.  | **Problem with session:** Server must store and look up session data for every request. This does not scale well across multiple servers or microservices. <br> **JWT solves the above problem**—using a self contained token which holds everything a server needs. No storage, no lookups, just verify the signature and trust the data. |  | 
-| **What?** | Session is a mechanism for the server to remember you across multiple requests. <br> When you login the server creates a session (a temp record of **"who you are"**) and returns you a **SessionID**. On every subsequent request you send that **SessionID** and the server looks up you session to know its still you.  | A **JWT** is a self contained token that carries user **information inside itself**. Unlike sessions where the server stores the data and gives you just an ID, JWT is the **data—encoded** and **signed** so it cant be altered. <br><br> **Structure:** Three parts separated by dots: `header.payload.signature` <br> **Header:** Token type and algorithm used <br> **Payload:** User data (username, userID, roles, etc..) <br> **Signature:** Used to prove the token wasn't modified by anyone| |
+| **Why?** | **HTTP is stateless**—each request is independent with no memory of previous requests. Without sessions, the server forgets you immediately after responding. <br> **The major problem:** You'd have to re-authenticate on every single action. Click a button? Login again. Load a new page? Login again. Want to buy another ice cream? Login again.  | **Problem with session:** Server must store and look up session data for every request. This does not scale well across multiple servers or microservices. <br> **JWT solves the above problem**—using a self contained token which holds everything a server needs. No storage, no lookups, just verify the signature and trust the data. | Cookies were introduced for the same reason as sessions were introduced. To provide HTTP requests some state as they are stateless. | 
+| **What?** | Session is a mechanism for the server to remember you across multiple requests. <br> When you login the server creates a session (a temp record of **"who you are"**) and returns you a **SessionID**. On every subsequent request you send that **SessionID** and the server looks up you session to know its still you.  | A **JWT** is a self contained token that carries user **information inside itself**. Unlike sessions where the server stores the data and gives you just an ID, JWT is the **data—encoded** and **signed** so it cant be altered. <br><br> **Structure:** Three parts separated by dots: `header.payload.signature` <br> **Header:** Token type and algorithm used <br> **Payload:** User data (username, userID, roles, etc..) <br> **Signature:** Used to prove the token wasn't modified by anyone| A cookie is a small piece of data the server sends to the browser and asks it to remember. The brower automatically sends it back to the server on future requests to the server, so that the server recognizes you making the HTTP request stateful  |
 
 ---
 ### How does Session, JWT, Cookies work?
@@ -62,3 +62,46 @@ Worked well for **single-server** applications. However, modern systems faced ch
 - **Cross-domain:** Works seemlessly across APIs, mobile apps etc..
 - **Quick:** No db lookups-just signature verification
 
+----
+
+**Cookies🍪**
+
+A cookie is a small piece of data the server sends to the browser, which the browser automatically sends back on future requests to the same site.
+
+- How it works:
+  1. Server: "Remember this: userID=123"
+  2. Browser stores it
+  3. Browser automatically includes it in every future request
+  4. Server: "Oh, userID=123, I know you now!"
+
+e.g., 
+
+its 1994. you walk into a bakery for the first time <br>
+"Hi i'd like a chocolate pastry," you say<br>
+The baker smiles, hands you the pastry, and you pay. Nice experience<br>
+Next day, you return. Same bakery, same baker<br>
+"Hi i'd like—"<br>
+"Welcome" the baker interrupts "What can I get you today?"<br>
+You pause. "didn't I come here yesterday..?"<br>
+"Did you?" The baker looks genuinely confused. "I see hundreds of people. Can't remember everyone."<br>
+Every. Single. Day. This happens.<br>
+You become a regular. You come 50 times. Every time, the baker treats you like a stranger. No "good to see you again!" just amnesia.<br>
+
+Then one day, something changes.<br>
+You walk in. The baker hands you a small card.<br>
+"Here, take this loyalty card. Write your name on it. Bring it every time you visit."<br>
+You write "Nikitha" and pocket the card.<br>
+Next visit, you show the card.<br>
+"Nikitha! Welcome back!" the baker exclaims. "Chocolate pastry again?"<br>
+"You remember!"<br>
+"Of course! Your card tells me who you are. I keep notes about what you like."<br>
+
+That card? That's a cookie.<br>
+
+The bakery is the website<br>
+The baker is the server (with amnesia—stateless HTTP)<br>
+The loyalty card is the cookie<br>
+Your name on the card is data (like userID=Nikitha)<br>
+Showing it each visit is your browser automatically sending the cookie with every request<br>
+
+**The baker (server) can't remember you naturally, so they give you a card (cookie) to remind them who you are each time you visit.**
