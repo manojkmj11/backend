@@ -13,10 +13,15 @@
 
 | Aspect | Session | jwt | Cookies |
 | --- | --- | --- | --- |
-| **Why?** | **HTTP is stateless**—each request is independent with no memory of previous requests. Without sessions, the server forgets you immediately after responding. <br> **The major problem:** You'd have to re-authenticate on every single action. Click a button? Login again. Load a new page? Login again. Want to buy another ice cream? Login again.  |  |  | 
-| **What?** | Session is a mechanism for the server to remember you across multiple requests. <br> When you login the server creates a session (a temp record of **"who you are"**) and returns you a **SessionID**. On every subsequent request you send that **SessionID** and the server looks up you session to know its still you.  | | |
+| **Why?** | **HTTP is stateless**—each request is independent with no memory of previous requests. Without sessions, the server forgets you immediately after responding. <br> **The major problem:** You'd have to re-authenticate on every single action. Click a button? Login again. Load a new page? Login again. Want to buy another ice cream? Login again.  | **Problem with session:** Server must store and look up session data for every request. This does not scale well across multiple servers or microservices. <br> **JWT solves the above problem**—using a self contained token which holds everything a server needs. No storage, no lookups, just verify the signature and trust the data. |  | 
+| **What?** | Session is a mechanism for the server to remember you across multiple requests. <br> When you login the server creates a session (a temp record of **"who you are"**) and returns you a **SessionID**. On every subsequent request you send that **SessionID** and the server looks up you session to know its still you.  | A **JWT** is a self contained token that carries user **information inside itself**. Unlike sessions where the server stores the data and gives you just an ID, JWT is the **data—encoded** and **signed** so it cant be altered. <br><br> **Structure:** Three parts separated by dots: `header.payload.signature` <br> **Header:** Token type and algorithm used <br> **Payload:** User data (username, userID, roles, etc..) <br> **Signature:** Used to prove the token wasn't modified by anyone| |
+
+---
+### How does Session, JWT, Cookies work?
 
 **Basic session flow**
+
+> Login → Server creates session & sends ID → Browser stores ID in cookie → Browser auto-sends cookie with requests → Server recognizes you.
 
 ```mermaid
 sequenceDiagram
@@ -31,3 +36,29 @@ Browser ->>+ Server: Next request + cookie <br>(Cookie: sessionID=xyz123)
 note over Server: Looks up in db for sessionID = "xyz123"<br>Finds: user="Nikitha"<br>Knows who you are!!
 Server ->>- Browser: Response
 ```
+
+**The session problems**
+
+Worked well for **single-server** applications. However, modern systems faced challenges:
+- **Cannot scale across multiple servers:** Sessions on server A cannot be accessible to server B
+- **Microservices architechture:** Multiple independent servers need to verify users, sharing session across different services is not ideal, every service would need access to the same session store/db
+- **Performance issues:** Every request requires a database/cache lookup to validate the session/user, When there are large number of users it leads to high traffic -> many lookups/db hits -> slower response times as, there's only have one sessions database
+
+---
+
+**JWT flow**
+
+1. nikitha (user) logs in -> manoj (server) creates JWT with your info, i sign it with a secret that only we both know, and send back the JWT token
+2. nikitha stores the JWT token usually in local storage
+3. nikitha makes http request to manoj with JWT token attached in the http header (`Authorization: Bearer oaibqkbqio11kabda`)
+4. manoj verifies signature -> Trusts the data inside without needing to look up anything because its sent by nikitha, just kidding. manoj/server verifies the token using the signature (that only we both know) and gets all the information about the user from the JWT token itself so it does not need to look up anything.
+
+**JWT's solution to Session's problem**
+
+**Stateless authentication** - No **server-side storage needed**. The token carries all the necessary information, signed to prevent modifications.
+
+- **Scalable:** Multiple servers can now verify the token independently
+- **Distributed:** Works across microservices without needing to access the same database across all the services
+- **Cross-domain:** Works seemlessly across APIs, mobile apps etc..
+- **Quick:** No db lookups-just signature verification
+
